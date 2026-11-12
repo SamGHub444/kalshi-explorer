@@ -1,0 +1,54 @@
+models:
+  - name: int_markets_calibration_24h
+    description: >
+      One row per settled binary market, enriched with event and series info.
+      Filtered to markets open at least 24h, volume >= min_volume,
+      and real quotes a day before close (bid > 0, ask < 1).
+    columns:
+      - name: market_id
+        description: Primary Key for the int table
+        data_tests:
+          - unique
+          - not_null
+      - name: opened_at
+        description: timestamp the market opened
+        data_tests:
+          - not_null
+      - name: closed_at
+        description: timestamp the market closed
+        data_tests:
+          - not_null
+      - name: settlement_value
+        description: 1 or 0 if yes or no was the outcome
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [0,1]
+                quote: false    
+      - name: yes_prob_day_before
+        description: probability via the midpoint of the bid and ask for yes approx day before
+        data_tests:
+          - between_zero_and_one 
+      - name: event_id
+        description: Foreign Key to stg_kalshi__events
+      - name: category
+        description: name of the category associated with the market
+        data_tests:
+          - not_null
+      - name: competition 
+        description: name of the competition within the category 
+      - name: market_name
+        description: name of the market
+      - name: outcome_name
+        description: specific outcome name for the market  
+      - name: event_name
+        description: name of the event
+      - name: mutually_exclusive
+        description: boolean true if only one market in the event can resolve yes   
+      - name: series_id
+        description: foreign key to stg_kalshi__series
+      - name: frequency
+        description: how often the series occurs
+      - name: series_name
+        description: name of the series                    

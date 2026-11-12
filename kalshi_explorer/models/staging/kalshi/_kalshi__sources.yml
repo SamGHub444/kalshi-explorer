@@ -1,0 +1,36 @@
+sources:
+  - name: kalshi
+    database: kalshi-explorer 
+    schema: raw_kalshi
+    description: last three days of kalshi events, markets and series raw data
+    config:
+      loaded_at_field: loaded_at
+      freshness:
+        warn_after: {count: 2, period: day}
+        error_after: {count: 3, period: day}
+
+
+    tables:
+      - name: events
+        description: raw events data
+        columns:
+          - name: payload
+            description: json string of event data
+            data_tests:
+              - not_null   
+
+      - name: markets
+        description: raw markets data
+        columns:
+          - name: payload
+            description: json string of markets data
+            data_tests:
+              - not_null
+
+      - name: series
+        description: raw series data, holds event market frequency and other information
+        columns:
+          - name: payload
+            description: json string of series data
+            data_tests:
+              - not_null        

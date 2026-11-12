@@ -1,0 +1,84 @@
+models:
+  - name: calibration_by_category_24h
+    description: >
+      calibration of categories by probability buckets
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - category
+              - probability_bucket
+    columns:
+      - name: category
+        description: Category of the market
+      - name: probability_bucket
+        description: separated by 0.1 buckets of probability
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+                quote: false 
+      - name: average_predicted_probability
+        description: the average predicted probability of yes for the category within a bucket
+        data_tests:
+          - not_null
+          - between_zero_and_one
+      - name: actual_yes_rate
+        description: the actual yes rate for that category within a bucket
+        data_tests:
+          - not_null
+          - between_zero_and_one  
+      - name: calibration_error
+        description: > 
+          actual yes rate minus average predicted; 
+          positive means underconfident, negative means overconfident
+        data_tests:
+          - not_null
+      - name: sample_size
+        description: number of markets for that category and probability bucket
+        data_tests:
+          - not_null
+
+  - name: calibration_by_competition_24h
+    description: >
+      calibration of categories by probability buckets
+    data_tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - category
+              - competition
+              - probability_bucket
+    columns:
+      - name: category
+        description: Category of the market
+      - name: competition
+        description: competition within the category, could be null  
+      - name: probability_bucket
+        description: separated by 0.1 buckets of probability
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+                quote: false 
+      - name: average_predicted_probability
+        description: the average predicted probability of yes for the category within a bucket
+        data_tests:
+          - not_null
+          - between_zero_and_one
+      - name: actual_yes_rate
+        description: the actual yes rate for that category within a bucket
+        data_tests:
+          - not_null
+          - between_zero_and_one  
+      - name: calibration_error
+        description: > 
+          actual yes rate minus average predicted; 
+          positive means underconfident, negative means overconfident
+        data_tests:
+          - not_null
+      - name: sample_size
+        description: number of markets for that category and probability bucket
+        data_tests:
+          - not_null
+

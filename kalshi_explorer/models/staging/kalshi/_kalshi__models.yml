@@ -1,0 +1,96 @@
+models:
+  - name: stg_kalshi__events
+    description: one kalshi event per row for which a market has settled parsed from JSON
+    columns:
+      - name: event_id
+        description: Primary Key for the events table
+        data_tests:
+          - unique
+          - not_null
+      - name: category
+        description: category of the event
+      - name: competition
+        description: competition of the event
+      - name: series_id
+        description: foreign key to stg_kalshi__series
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:  
+                to: ref('stg_kalshi__series')
+                field: series_id
+
+          
+  - name: stg_kalshi__markets
+    description: one settled Kalshi market per row parsed from JSON
+    columns:
+      - name: market_id
+        description: Primary Key for the market table
+        data_tests:
+          - unique
+          - not_null
+      - name: result
+        description: The result of the market is either yes, no or scalar
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['yes','no','scalar']
+      - name: event_id
+        description: foreign key to stg_kalshi__events
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('stg_kalshi__events')
+                field: event_id
+      - name: opened_at
+        description: timestamp the market opened for predicting
+        data_tests:
+          - not_null     
+      - name: closed_at
+        description: timestamp the market closed for predicting
+        data_tests:
+          - not_null 
+      - name: market_type
+        description: binary or otherwise
+      - name: market_name
+        description: name of the market
+      - name: outcome_name 
+        description: name of the outcome of the market   
+      - name: prev_yes_bid
+        description: highest price someone will buy a YES bid about a day before close (0–1)
+        data_tests:
+          - between_zero_and_one
+      - name: settlement_value
+        description: value of the settlement (0–1)
+        data_tests:
+          - between_zero_and_one    
+      - name: prev_yes_ask
+        description: lowest price someone selling yes about a day before close (0–1)
+        data_tests:
+          - between_zero_and_one
+      - name: market_volume
+        description: number of contracts traded
+        data_tests:
+          - non_negative    
+      - name: prev_price
+        description: price about a day before close (0-1)
+        data_tests:
+          - between_zero_and_one        
+     
+                
+
+  - name: stg_kalshi__series
+    description: one Kalshi series information parsed by JSON
+    columns:
+      - name: series_id
+        description: Primary Key for the series table
+        data_tests:
+          - unique
+          - not_null  
+      - name: frequency
+        description: how often the series happens     
+
+
+              
